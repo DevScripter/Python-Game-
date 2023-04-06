@@ -1,0 +1,61 @@
+import pygame
+
+# Define the constants
+WINDOW_WIDTH = 640
+WINDOW_HEIGHT = 480
+SNAKE_SPEED = 10
+
+# Initialize Pygame
+pygame.init()
+
+# Create the window
+screen = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
+
+# Create the snake
+snake = pygame.image.load("snake.png")
+snake_rect = snake.get_rect()
+snake_rect.center = (WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2)
+
+# Create the food
+food = pygame.image.load("food.png")
+food_rect = food.get_rect()
+food_rect.center = (random.randint(0, WINDOW_WIDTH - food.get_width()), random.randint(0, WINDOW_HEIGHT - food.get_height()))
+
+# Create the score
+score = 0
+
+# Create the main loop
+while True:
+
+    # Check for events
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            pygame.quit()
+            exit()
+
+        # Check if the user pressed a key
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_UP:
+                snake_rect.move_ip(0, -SNAKE_SPEED)
+            elif event.key == pygame.K_DOWN:
+                snake_rect.move_ip(0, SNAKE_SPEED)
+            elif event.key == pygame.K_LEFT:
+                snake_rect.move_ip(-SNAKE_SPEED, 0)
+            elif event.key == pygame.K_RIGHT:
+                snake_rect.move_ip(SNAKE_SPEED, 0)
+
+    # Check if the snake hit itself or the edge of the screen
+    if snake_rect.colliderect(snake_rect.copy()) or snake_rect.top <= 0 or snake_rect.bottom >= WINDOW_HEIGHT or snake_rect.left <= 0 or snake_rect.right >= WINDOW_WIDTH:
+        print("Game over!")
+        break
+
+    # Check if the snake ate the food
+    if snake_rect.colliderect(food_rect):
+        score += 1
+        food_rect.center = (random.randint(0, WINDOW_WIDTH - food.get_width()), random.randint(0, WINDOW_HEIGHT - food.get_height()))
+
+    # Draw the screen
+    screen.fill((255, 255, 255))
+    screen.blit(snake, snake_rect)
+    screen.blit(food, food_rect)
+    pygame.display.flip()
